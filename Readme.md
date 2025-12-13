@@ -2,3 +2,9 @@
 
 **Description:**  
 This is a minimal implementation of the **RAG** (Retrieval-Augmented Generation) model for question answering
+
+
+##Installation
+```bash
+$ pip install -r requirements.txt
+```
