@@ -43,7 +43,7 @@ class OPENAIProvider(LLMInterface):
 
     def generate_response(self, prompt: str, chat_history: list=[], max_output_tokens: int = None, temperature: float = None): 
 
-         if not self.client:
+        if not self.client:
             self.logger.error("Failed to initialize OpenAI client. Client instance is None.")
             return None
 
@@ -74,8 +74,8 @@ class OPENAIProvider(LLMInterface):
             or not response.choices[0].message.content
             ):
 
-                self.logger.error("Invalid or empty chat response.")
-                    return None
+            self.logger.error("Invalid or empty chat response.")
+            return None
 
         return response.choices[0].message.content
 
