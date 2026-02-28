@@ -18,7 +18,7 @@ class CoHereProvider(LLMInterface):
         self.embedding_model_id = None
         self.emnbedding_size = None 
 
-        self.client = cohere.ClientV2(self.api_key)
+        self.client = cohere.ClientV2(api_key = self.api_key)
     
         self.logger = logging.getLogger(__name__)
 
@@ -50,20 +50,23 @@ class CoHereProvider(LLMInterface):
         max_output_tokens = max_output_tokens if max_output_tokens else self.default_max_input_token
         temperature = temperature if temperature else self.default_temperature
 
+        chat_history.append(
+            self.construct_prompt(prompt = prompt, role = CoHereEnum.USER.value)
+        )
+
         response = self.client.chat(
 
             model = self.generation_model_id,
-            chat_history = chat_history,
-            message = self.process_text(prompt),
+            messages = chat_history,
             temperature = temperature,
             max_tokens= max_output_tokens 
         )    
 
-        if not response or not response.text:
+        if not response or not response.text or not response.message.content[0].text:
             self.logger.error("Invalid or empty chat response.")
             return None 
         
-        return response.text
+        return response.message.content[0].text
 
 
     def embed(self, text: str, document_type: str = None):
@@ -77,17 +80,23 @@ class CoHereProvider(LLMInterface):
             return None
         
         input_type = CoHereEnum.DOCUMENT
+
         if document_type == DocumentTypeEnum.QUERY:
             input_type == CoHereEnum.QUERY
 
         response = self.client.embed(
             model = self.embedding_model_id, 
-            text = [self.process_txt(text)],
+            texts = [self.process_txt(text)],
             input_type= input_type,
             embedding_types=["float"],
         )
 
-        
+        if not response or not response.embeddings or not response.embeddings.flot:
+
+            self.logger.error("Error While Embedding Text") 
+            return None
+
+        return response.embeddings.flot[0]
 
 
 
