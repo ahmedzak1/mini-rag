@@ -18,8 +18,12 @@ class Settings(BaseSettings):
     EMBEDDING_BACKEDND: str
 
     OPENAI_API_KEY: str = None
-    BASE_URL: str = None
+    OPENAI_BASE_URL: str = None
+    
     COHERE_API_KEY: str = None
+
+    GROQ_API_KEY: str = None
+    GROQ_BASE_URL: str = None
 
 
     GENERATION_MODEL_ID: str = None
