@@ -16,7 +16,9 @@ class LLMInterface(ABC):
 
     @abstractmethod
     def embed(self, text: str, document_type: str = None):
-        pass
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support embeddings."
+        )
 
     @abstractmethod
     def construct_prompt(self, prompt: str, role: str):
