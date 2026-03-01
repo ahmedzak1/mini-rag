@@ -34,7 +34,7 @@ class OPENAIProvider(LLMInterface):
     def set_embedding_model(self, model_id: str, embedding_size: int):
 
         self.embedding_model_id = model_id 
-        self.emnbedding_size = embedding_size
+        self.embedding_size = embedding_size
 
     def process_txt(self, text: str):
 
