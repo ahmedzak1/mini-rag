@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     MONGO_DB_DATABASE: str
 
     GENERATION_BACKEND: str
-    EMBEDDING_BACKEDND: str
+    EMBEDDING_BACKEND: str
 
     OPENAI_API_KEY: str = None
     OPENAI_BASE_URL: str = None
