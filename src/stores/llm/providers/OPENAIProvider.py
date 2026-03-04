@@ -17,7 +17,7 @@ class OPENAIProvider(LLMInterface):
 
         self.generation_model_id = None
         self.embedding_model_id = None
-        self.emnbedding_size = None 
+        self.embedding_size = None 
 
         self.client = OpenAI(  
             api_key=self.api_key,
