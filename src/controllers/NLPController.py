@@ -1,7 +1,9 @@
 from .BaseController import BaseController
-from models.db_schemas.projects import Project, DataChunk
+from models.db_schemas.projects import Project
+from models.db_schemas.data_chunk import DataChunk
 from typing import List
 from stores.llm.LLMEnums import DocumentTypeEnum
+import json
 
 class NLPController(BaseController):
     def __init__(self, generation_client, embedding_client, vectordb_client):
@@ -23,11 +25,16 @@ class NLPController(BaseController):
         collection_name = self.create_collection_name(project_id = project.project_id)
         collection_info = self.vectordb_client.get_collection_info(collection_name=collection_name)
 
-        return collection_info
+        return json.load(
+            json.dumps(collection_info, default= lambda x: x.__dict__)
+        )
     
-    def index_into_vectordb(self, project: Project, chunks: List[DataChunk],
-                                    do_reset: bool = False):
-        
+    def index_into_vectordb(
+            self, project: Project, 
+            chunks: List[DataChunk],
+            chunk_ids: List[int],
+            do_reset: bool = False):
+
         collection_name = self.create_collection_name(project_id = project.project_id)
 
         texts = [c.chunk_text for c in chunks]
@@ -50,7 +57,8 @@ class NLPController(BaseController):
             collection_name = collection_name,
             texts = texts,
             metadata = metadata,
-            vector = vector
+            vector = vector,
+            record_ids = chunk_ids
         )
 
         return True
