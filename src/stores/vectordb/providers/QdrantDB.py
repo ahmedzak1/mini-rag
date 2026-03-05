@@ -73,6 +73,7 @@ class QdrantDB(VectorDBInterface):
                 collection_name = collection_name,
                 points = [
                     models.PointStruct(
+                        id = [record_id],
                         vector=vector,
                         payload = {
                             "text": text, "metadata": metadata
@@ -88,14 +89,14 @@ class QdrantDB(VectorDBInterface):
         
 
     def insert_many(self, collection_name: str, texts: list, vector: list,
-                     metadata: list = None, record_id: list = None,
+                     metadata: list = None, record_ids: list = None,
                     batch_size: int = 50):
         
         if metadata is None:
             metadata = [None] * len(texts)
 
-        if record_id in None:
-            record_id = [None] * len(texts)
+        if record_ids is None:
+            record_ids = list(range(0, len(texts)))
 
         for i in range(0, len(texts), batch_size):
 
@@ -104,10 +105,12 @@ class QdrantDB(VectorDBInterface):
             batch_texts = texts[i:batch_end]
             batch_vector = vector[i:batch_end]
             batch_metadata = metadata[i:batch_end] 
+            batch_record_ids = record_ids[i:batch_end]
 
             batch_points= [
 
                 models.PointStruct(
+                    id = batch_record_ids[idx],
                     vector=batch_vector[idx],
                     payload = {
                         "text": batch_texts[idx], "metadata": batch_metadata[idx]
