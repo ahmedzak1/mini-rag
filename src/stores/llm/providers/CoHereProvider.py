@@ -82,7 +82,7 @@ class CoHereProvider(LLMInterface):
         input_type = CoHereEnum.DOCUMENT
 
         if document_type == DocumentTypeEnum.QUERY:
-            input_type == CoHereEnum.QUERY
+            input_type = CoHereEnum.QUERY
 
         response = self.client.embed(
             model = self.embedding_model_id, 
@@ -91,12 +91,12 @@ class CoHereProvider(LLMInterface):
             embedding_types=["float"],
         )
 
-        if not response or not response.embeddings or not response.embeddings.flot:
+        if not response or not response.embeddings or not response.embeddings.float:
 
             self.logger.error("Error While Embedding Text") 
             return None
 
-        return response.embeddings.flot[0]
+        return response.embeddings.float[0]
 
 
 
