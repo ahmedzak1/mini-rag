@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter, status, Request
 from fastapi.responses import JSONResponse
-from routes.schemas.nlp import PushRequest
+from routes.schemas.nlp import PushRequest, SearchRequest
 from models.ProjectModel import ProjectModel
 from models.ChunkModel import ChunkModel
 from models.enums.ResponseEnum import ResponseSignal
@@ -90,7 +90,7 @@ async def get_project_index_info(request: Request, project_id: str):
     )
 
     collection_info = nlp_controller.get_vector_db_collection_info(
-        project=project_id
+        project=project
     )
 
     return JSONResponse(
@@ -99,3 +99,38 @@ async def get_project_index_info(request: Request, project_id: str):
             "collection_info": collection_info
         }
     )
+
+@nlp_router.get("/index/search/{project_id}")
+async def search_index(request: Request, project_id: str, search_request: SearchRequest):
+
+    project_model = await ProjectModel.create_instance(db_client=request.app.db_client)
+
+    project = await project_model.get_project_or_create_one(project_id=project_id)
+
+    nlp_controller = NLPController(
+        generation_client=request.app.generation_client,
+        embedding_client=request.app.embedding_client,
+        vectordb_client=request.app.vectordb_client
+    )
+
+    search_results = nlp_controller.search_vector_db_collection(
+        project=project,
+        text = search_request.text,
+        limit = search_request.limit
+    )
+
+    if not search_results:
+
+        return JSONResponse(
+        content={
+           "signal": ResponseSignal.VECTOR_DB_SEARCH_ERROR.value,
+            
+        }
+    ) 
+
+    return JSONResponse(
+        content={
+           "signal": ResponseSignal.VECTOR_DB_SEARCH_SUCCESS.value,
+            "search_results": search_results
+        }
+    ) 
