@@ -23,7 +23,8 @@ class OPENAIProvider(LLMInterface):
             api_key=self.api_key,
             base_url=self.base_url
         )
-    
+
+        self.enums = OPENAIEnum
         self.logger = logging.getLogger(__name__)
         
 
