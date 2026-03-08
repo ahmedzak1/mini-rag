@@ -28,7 +28,7 @@ async def startup_span():
 
     app.template_parser = TemplateParser(
         language=settings.MAIN_LANG,
-        deafault_language=settings.DEFAULT_LANG
+        default_language=settings.DEFAULT_LANG
     )
 
 
