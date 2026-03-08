@@ -96,7 +96,7 @@ class NLPController(BaseController):
         )
 
         if not retrieved_docs or len(retrieved_docs) == 0:
-            return None
+            return answer, full_prompt, chat_history
         
         system_prompt = self.template_parser.get("rag", "system_prompt")
 
@@ -104,14 +104,19 @@ class NLPController(BaseController):
 
                 self.template_parser.get("rag", "documents_prompt", {
                         "doc_num": idx + 1,
-                        "chunk_text": doc.text
+                        "chunk_text": doc["text"]
                     })
 
                 for idx, doc in enumerate(retrieved_docs)
             ]
         )
 
-        footer_prompt = self.template_parser.get("rag", "footer_prompt")
+
+        footer_prompt = self.template_parser.get("rag", "footer_prompt", {
+            "query": query
+        })
+
+
 
         chat_history = [
             self.generation_client.construct_prompt(
@@ -119,6 +124,8 @@ class NLPController(BaseController):
                 role = self.generation_client.enums.SYSTEM.value
             )
         ]
+
+       
 
         full_prompt = "\n\n".join(
             [documents_prompt, footer_prompt]
