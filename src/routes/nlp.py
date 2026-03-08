@@ -140,6 +140,10 @@ async def search_index(request: Request, project_id: str, search_request: Search
 @nlp_router.get("/index/answer/{project_id}")
 async def generate_answer(request: Request, project_id: str, search_request: SearchRequest):
 
+    answer = None
+    full_prompt = None
+    chat_histroy = None 
+
     project_model = await ProjectModel.create_instance(db_client=request.app.db_client)
 
     project = await project_model.get_project_or_create_one(project_id=project_id)
