@@ -52,7 +52,7 @@ class OPENAIProvider(LLMInterface):
             self.logger.error("Model ID is not configured.")
             return None
 
-        max_output_tokens = max_output_tokens if max_output_tokens else self.default_max_input_token
+        max_output_tokens = max_output_tokens if max_output_tokens else self.default_max_output_token
         temperature = temperature if temperature else self.default_temperature
 
         chat_history.append(
@@ -107,7 +107,7 @@ class OPENAIProvider(LLMInterface):
     def construct_prompt(self, prompt: str, role: str):
         return {
             "role": role,
-            "content": self.process_text(prompt)
+            "content": self.process_txt(prompt)
         }
 
 
