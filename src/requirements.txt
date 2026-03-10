@@ -12,6 +12,9 @@ cohere==5.20.7
 groq==1.0.0
 qdrant-client==1.17.0
 pywin32==311
+SQLAlchemy==2.0.36
+asyncpg==0.30.0
+
 
 
 
