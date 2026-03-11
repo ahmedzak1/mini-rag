@@ -1,5 +1,5 @@
 from .minirag_base import SQLAlchemyBase
-from sqlalchemy import Column, Integer, DATETIME, func, String, ForeignKey, Index
+from sqlalchemy import Column, Integer, DateTime, func, String, ForeignKey, Index
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import relationship
 import uuid
@@ -16,11 +16,11 @@ class DataChunk(SQLAlchemyBase):
     chunk_metadata = Column(JSONB, nullable=False)
     chunk_order = Column(Integer, nullable=False)
 
-    chunk_project_id = Column(Integer, ForeignKey("projects.project_id"), nullable=False)
+    chunk_project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
     chunk_asset_id = Column(Integer, ForeignKey("assets.asset_id"), nullable=False)
 
-    created_at = Column(DATETIME(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = created_at = Column(DATETIME(timezone=True), onupdate=func.now(), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
 
     project = relationship("Project", back_populates="chunks")
