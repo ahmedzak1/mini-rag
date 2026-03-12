@@ -17,12 +17,12 @@ class NLPController(BaseController):
         return f"Collection_{project_id}".strip()
     
     def reset_vector_db_collection(self, project: Project):
-        collection_name = self.create_collection_name(project_id = project.project_id)
+        collection_name = self.create_collection_name(project_id = project.id)
         return self.vectordb_client.delete_collection(collection_name=collection_name)
     
     def get_vector_db_collection_info(self, project: Project):
 
-        collection_name = self.create_collection_name(project_id = project.project_id)
+        collection_name = self.create_collection_name(project_id = project.id)
         collection_info = self.vectordb_client.get_collection_info(collection_name=collection_name)
 
         return json.loads(
@@ -35,7 +35,7 @@ class NLPController(BaseController):
             chunk_ids: List[int],
             do_reset: bool = False):
 
-        collection_name = self.create_collection_name(project_id = project.project_id)
+        collection_name = self.create_collection_name(project_id = project.id)
 
         texts = [c.chunk_text for c in chunks]
         metadata = [ c.chunk_metadata for c in chunks]
@@ -65,7 +65,7 @@ class NLPController(BaseController):
 
     def search_vector_db_collection(self, project: Project, text: str, limit: int =5):
 
-        collection_name = self.create_collection_name(project_id = project.project_id)
+        collection_name = self.create_collection_name(project_id = project.id)
 
         vector = self.embedding_client.embed(
             text=text,
@@ -103,7 +103,7 @@ class NLPController(BaseController):
 
                 self.template_parser.get("rag", "documents_prompt", {
                         "doc_num": idx + 1,
-                        "chunk_text": doc["text"]
+                        "chunk_text": self.generation_client.process_txt(doc["text"])
                     })
 
                 for idx, doc in enumerate(retrieved_docs)
