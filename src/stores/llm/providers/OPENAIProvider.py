@@ -107,7 +107,7 @@ class OPENAIProvider(LLMInterface):
     def construct_prompt(self, prompt: str, role: str):
         return {
             "role": role,
-            "content": self.process_txt(prompt)
+            "content": prompt
         }
 
 
