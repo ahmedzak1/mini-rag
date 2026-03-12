@@ -1,1 +1,1 @@
-from .minirag.schemas import Project, DataChunk, Asset, RetrievedDocuments
+from models.db_schemas.minirag.schemas import Project, DataChunk, Asset, RetrievedDocuments
