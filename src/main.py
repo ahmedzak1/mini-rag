@@ -22,7 +22,7 @@ async def startup_span():
     )
 
     llm_factory_provider = LLMProviderFactory(settings)
-    vectordb_factory_provider = VectorDBFactory(settings)
+    vectordb_factory_provider = VectorDBFactory(config=settings, db_client=app.db_client)
 
     app.generation_client = llm_factory_provider.create(provider=settings.GENERATION_BACKEND)
     app.generation_client.set_generation_model(model_id = settings.GENERATION_MODEL_ID)
@@ -31,7 +31,7 @@ async def startup_span():
     app.embedding_client.set_embedding_model(model_id = settings.EMBEDDING_MODEL_ID, embedding_size = settings.EMBEDDING_MODEL_SIZE)
     
     app.vectordb_client = vectordb_factory_provider.create(provider=settings.VECTOR_DB_BACKEND)
-    app.vectordb_client.connect()
+    await app.vectordb_client.connect()
 
     app.template_parser = TemplateParser(
         language=settings.MAIN_LANG,
@@ -43,7 +43,7 @@ async def startup_span():
 @app.on_event("shutdown")
 async def shutdown_span():
     app.db_engine.dispose()
-    app.vectordb_client.disconnect()
+    await app.vectordb_client.disconnect()
 
 app.include_router(base.base_router)
 app.include_router(data.data_router)
