@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     DEFAULT_MAX_OUTPUT_TOKENS: int = None
     DEAFULT_TEMPERATURE: float = None
 
-    VECTOR_DB_BACKEND_LITRAL= List[str] = None
+    VECTOR_DB_BACKEND_LITRAL: List[str] = None
     VECTOR_DB_BACKEND: str
     VECTOR_DB_PATH: str
     VECTOR_DB_DISTANCE_METHOD: str = None
