@@ -41,13 +41,13 @@ class PGVectorProvider(VectorDBInterface):
     async def is_collection_exists(self, collection_name: str) -> bool:
         async with self.db_client() as session:
             async with session.begin():
-                list_tbl = sql_text('SELECT * FROM Pg_tables WHERE tablename = :collection_name')
+                list_tbl = sql_text(f'SELECT * FROM Pg_tables WHERE tablename = :collection_name')
                 result = await session.execute(list_tbl, {"collection_name": collection_name})
                 record = result.scalar_one_or_none()
 
         return record
         
-    async def lis_all_collections(self) -> List:
+    async def list_all_collections(self) -> List:
         async with self.db_client() as session:
             async with session.begin():
                 list_tbl = sql_text('SELECT * FROM Pg_tables WHERE tablename LIKE :prefix')
@@ -59,17 +59,17 @@ class PGVectorProvider(VectorDBInterface):
     async def get_collection_info(self, collection_name: str) -> dict:
         async with self.db_client() as session:
             async with session.begin():
-                table_info_sql = sql_text('''
+                table_info_sql = sql_text(f'''
                     SELECT schemaname, tanlename, tableowner, tablespace, hasindex
                     FROM Pg_tables
-                    where tablename = :collection_name
+                    where tablename = {collection_name}
                     '''
                 )
 
-                count_sql = sql_text(f'SELECT count(*) FROM :collection_name')
+                count_sql = sql_text(f'SELECT count(*) FROM {collection_name}')
                
-                table_info = await session.execute(table_info_sql, {"collection_name": collection_name})
-                record_count = await session.execute(count_sql, {"collection_name": collection_name})
+                table_info = await session.execute(table_info_sql)
+                record_count = await session.execute(count_sql)
 
                 table_data = table_info.fetchone()
                 if not table_data:
@@ -84,8 +84,8 @@ class PGVectorProvider(VectorDBInterface):
         async with self.db_client() as session:
             async with session.begin():
                 self.logger.info(f"Delete collection: {collection_name}")
-                delete_sql = sql_text('DROP TABLE IF EXISTS :collection_name')
-                await session.execute(delete_sql, {"collection_name": collection_name})
+                delete_sql = sql_text(f'DROP TABLE IF EXISTS {collection_name}')
+                await session.execute(delete_sql)
                 await session.commit()
 
         return True 
@@ -123,18 +123,15 @@ class PGVectorProvider(VectorDBInterface):
         async with self.db_client() as session:
             async with session.begin():
                 check_sql = sql_text(
-                    """"
+                    f""""
                     SELECT 1
                     FROM pg_indexes
-                    WHERE tablename = :collection_name
-                    AND indexname = :index_name
+                    WHERE tablename = {collection_name}
+                    AND indexname = {index_name}
                     """
                 )
 
-                result = await session.execute(check_sql,{
-                    "collection_name": collection_name,
-                    "index_name": index_name
-                })
+                result = await session.execute(check_sql)
 
                 return bool(result.scalar_one_or_none())
         
