@@ -8,6 +8,7 @@ class VectorDBFactory:
         
         self.config = config
         self.base_controller = BaseController()
+        self.db_client = db_client
 
     def create(self, provider: str):
         qdrant_db_client = self.base_controller.get_vectordb_path(vectordb_name=self.config.VECTOR_DB_BACKEND)
